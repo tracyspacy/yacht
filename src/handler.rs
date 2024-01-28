@@ -15,7 +15,7 @@ pub fn handle_key_events(key_event: KeyEvent, app: &mut App) -> AppResult<()> {
             app.cursor_position = 0;
         }
 
-        KeyCode::Char('d') if app.input_mode == InputMode::Inactive => {
+        KeyCode::Char('d') | KeyCode::Char('D') if app.input_mode == InputMode::Inactive => {
             app.set_activity_done(app.selected);
         }
         KeyCode::Char('r') if app.input_mode == InputMode::Inactive => {
