@@ -5,7 +5,7 @@ use crossterm::event::{KeyCode, KeyEvent};
 pub fn handle_key_events(key_event: KeyEvent, app: &mut App) -> AppResult<()> {
     match key_event.code {
         // Exit application on `q`
-        KeyCode::Char('q') if app.input_mode == InputMode::Inactive => {
+        KeyCode::Char('q') | KeyCode::Char('Q') if app.input_mode == InputMode::Inactive => {
             app.quit();
         }
 
@@ -18,7 +18,7 @@ pub fn handle_key_events(key_event: KeyEvent, app: &mut App) -> AppResult<()> {
         KeyCode::Char('d') | KeyCode::Char('D') if app.input_mode == InputMode::Inactive => {
             app.set_activity_done(app.selected);
         }
-        KeyCode::Char('r') if app.input_mode == InputMode::Inactive => {
+        KeyCode::Char('r') | KeyCode::Char('R') if app.input_mode == InputMode::Inactive => {
             app.remove_activity(app.selected);
         }
 
