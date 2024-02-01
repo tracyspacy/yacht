@@ -1,5 +1,10 @@
 # Y.A.c.H.T. - Yet Another CLI Habit Tracker written in Rust
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/tracyspacy/yacht/main/figurehead_icon.svg" width="96" height="96"/>
+</p>
+
+
 ### About
 
 Y.A.C.H.T., a command-line habit tracker written in Rust. This tool allows you to track the activities that make up your perfect day and monitor your daily progress effortlessly.
@@ -14,7 +19,6 @@ Y.A.C.H.T., a command-line habit tracker written in Rust. This tool allows you t
 
 ![yacht_demo](https://github.com/tracyspacy/yacht/assets/42025315/68513987-7f2a-4474-868f-165b40220565)
 
-gif was created using [VHS](https://github.com/charmbracelet/vhs)
 
 ### Installation
 
@@ -40,4 +44,10 @@ cargo build --release
 ### Contributing
 
 Contributions are welcome! If you encounter any bugs, have suggestions for improvements, or would like to contribute new features, please open an issue or submit a pull request.
+
+### Credentials
+
+gif was created using [VHS](https://github.com/charmbracelet/vhs)
+
+icon is from [game-icons.net](https://game-icons.net/1x1/delapouite/figurehead.html)
 
