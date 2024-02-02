@@ -4,7 +4,6 @@ mod tests {
     use crate::activities_manager::FrequencyType;
     use crate::app::{App, InputMode};
 
-
     #[test]
     fn test_default_app() {
         let app = App::default();
@@ -42,9 +41,7 @@ mod tests {
         assert_eq!(app.cursor_position, 6);
     }
 
-
-    pub fn test_remove_added_activity(app: &mut App,activity_name: String) {
-
+    pub fn test_remove_added_activity(app: &mut App, activity_name: String) {
         // Add a new activity
         let activity_name = String::from(activity_name);
         // Remove the activity
@@ -61,9 +58,7 @@ mod tests {
         }
     }
 
-    pub fn test_add_new_activity(app: &mut App,name:String) {
-
-
+    pub fn test_add_new_activity(app: &mut App, name: String) {
         let frequency = FrequencyType::AllWeek;
 
         app.input = name.clone();
@@ -86,18 +81,14 @@ mod tests {
         // Ensure that global status is refreshed after adding activity
         assert_eq!(app.day_status, false); // As it's not a perfect day yet
         assert_eq!(app.total_perfect_days, 0); // As it's not a perfect day yet
-
     }
-
 
     #[test]
     fn test_add_new_activity_and_remove_ascii_and_not() {
-            let mut app = App::new();
-            test_add_new_activity(&mut app,String::from("THINK"));
-            test_remove_added_activity(&mut app,String::from("THINK"));
-            test_add_new_activity(&mut app,String::from("BÜCHER LESEN"));
-            test_remove_added_activity(&mut app,String::from("BÜCHER LESEN"));
-        }
-
-
+        let mut app = App::new();
+        test_add_new_activity(&mut app, String::from("THINK"));
+        test_remove_added_activity(&mut app, String::from("THINK"));
+        test_add_new_activity(&mut app, String::from("BÜCHER LESEN"));
+        test_remove_added_activity(&mut app, String::from("BÜCHER LESEN"));
+    }
 }
