@@ -1,4 +1,5 @@
 #[cfg(test)]
+
 mod tests {
     use crate::activities_manager::FrequencyType;
     use crate::app::{App, InputMode};
@@ -10,12 +11,6 @@ mod tests {
         assert_eq!(app.running, true);
         assert_eq!(app.input, String::new());
         assert_eq!(app.input_mode, InputMode::Inactive);
-    }
-
-    #[test]
-    fn test_new_app() {
-        // Test construction of a new App instance
-        App::new();
     }
 
     #[test]
@@ -33,13 +28,40 @@ mod tests {
     }
 
     #[test]
-    fn test_add_new_activity() {
+    fn test_enter_non_ascii_char_inserts_new_char_at_cursor_position() {
         let mut app = App::default();
+        app.input = String::from("Veräderung");
+        app.cursor_position = 5;
 
-        let activity_name = String::from("THINK");
+        app.enter_char('N');
+
+        // Ensure that 'X' is inserted at cursor position
+        assert_eq!(app.input, "VeräNderung");
+        // Ensure that cursor position is moved to the right
+        assert_eq!(app.cursor_position, 6);
+    }
+
+    pub fn test_remove_added_activity(app: &mut App, activity_name: String) {
+        // Add a new activity
+        let activity_name = String::from(activity_name);
+        // Remove the activity
+        if let Some(index) = app
+            .todays_activities
+            .iter()
+            .position(|x| *x == activity_name)
+        {
+            app.remove_activity(index);
+            assert!(!app.all_activities.is_in_activities(activity_name));
+            assert_eq!(app.logs, "Activity is removed!");
+        } else {
+            panic!("Activity not found in todays_activities");
+        }
+    }
+
+    pub fn test_add_new_activity(app: &mut App, name: String) {
         let frequency = FrequencyType::AllWeek;
 
-        app.input = activity_name.clone();
+        app.input = name.clone();
         app.input_mode = InputMode::ActiveName;
         app.add_new_activity_name();
         app.new_activity_frequency = frequency;
@@ -49,7 +71,7 @@ mod tests {
         //dbg!(app.new_activity_name);
 
         // Ensure that activity is added to all_activities
-        assert!(app.all_activities.is_in_activities(activity_name));
+        assert!(app.all_activities.is_in_activities(name.clone()));
         // Ensure that new_activity_name is cleared after adding activity
         assert_eq!(app.new_activity_name, "");
         // Ensure that new_activity_frequency is set correctly after adding activity
@@ -62,16 +84,11 @@ mod tests {
     }
 
     #[test]
-    fn test_remove_activity() {
-        let mut app = App::default();
-        test_add_new_activity();
-        let activity_name = String::from("Exercise");
-        // Call remove_activity method
-        app.remove_activity(0); // Assuming only one activity for simplicity
-
-        // Ensure that activity is removed from all_activities
-        assert!(!app.all_activities.is_in_activities(activity_name));
-        // Ensure that logs indicate successful activity removal
-        assert_eq!(app.logs, "Activity is removed!");
+    fn test_add_new_activity_and_remove_ascii_and_not() {
+        let mut app = App::new();
+        test_add_new_activity(&mut app, String::from("THINK"));
+        test_remove_added_activity(&mut app, String::from("THINK"));
+        test_add_new_activity(&mut app, String::from("BÜCHER LESEN"));
+        test_remove_added_activity(&mut app, String::from("BÜCHER LESEN"));
     }
 }
