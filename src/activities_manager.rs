@@ -149,11 +149,14 @@ impl AllActivities {
         let file = File::create(ACTIVITIES_FILE)?;
         bincode::serialize_into(file, self).map_err(|e| io::Error::new(io::ErrorKind::Other, e))
     }
+
     pub fn load_from_file() -> Result<Self, io::Error> {
-        let file = File::open(ACTIVITIES_FILE)?;
-        let data =
-            bincode::deserialize_from(file).map_err(|e| io::Error::new(ErrorKind::Other, e))?;
-        Ok(data)
+        match File::open(ACTIVITIES_FILE) {
+            Ok(file) => {
+                bincode::deserialize_from(file).map_err(|e| io::Error::new(ErrorKind::Other, e))
+            }
+            Err(e) => Err(e),
+        }
     }
 
     pub fn add_activity(

@@ -77,45 +77,46 @@ impl App {
         self.running = false;
     }
 
-    fn move_cursor_left(&mut self) {
-        let cursor_moved_left = self.cursor_position.saturating_sub(1);
+    fn move_cursor_left(&mut self, adjustment: usize) {
+        let cursor_moved_left = self.cursor_position.saturating_sub(adjustment);
         self.cursor_position = self.clamp_cursor(cursor_moved_left);
     }
 
-    fn move_cursor_right(&mut self) {
-        let cursor_moved_right = self.cursor_position.saturating_add(1);
+    //adjustment since ascii chars could be from 1 to 4 bytes
+    fn move_cursor_right(&mut self, adjustment: usize) {
+        let cursor_moved_right = self.cursor_position.saturating_add(adjustment);
         self.cursor_position = self.clamp_cursor(cursor_moved_right);
     }
 
     pub fn enter_char(&mut self, new_char: char) {
         self.input
             .insert(self.cursor_position, new_char.to_ascii_uppercase());
-        self.move_cursor_right();
+        self.move_cursor_right(new_char.len_utf8());
+        //dbg!(self.cursor_position);
     }
 
     fn clamp_cursor(&self, new_cursor_pos: usize) -> usize {
-        new_cursor_pos.clamp(0, self.input.len())
+        new_cursor_pos.clamp(0, self.input.len()) // len() instead of chars().count()
     }
 
     pub fn delete_char(&mut self) {
-        let is_not_cursor_leftmost = self.cursor_position != 0;
-        if is_not_cursor_leftmost {
-            // Method "remove" is not used on the saved text for deleting the selected char.
-            // Reason: Using remove on String works on bytes instead of the chars.
-            // Using remove would require special care because of char boundaries.
-
+        if self.cursor_position != 0 {
             let current_index = self.cursor_position;
             let from_left_to_current_index = current_index - 1;
 
-            // Getting all characters before the selected character.
-            let before_char_to_delete = self.input.chars().take(from_left_to_current_index);
-            // Getting all characters after selected character.
-            let after_char_to_delete = self.input.chars().skip(current_index);
+            let target_char = self
+                .input
+                .char_indices()
+                .filter(|&(idx, _)| idx <= from_left_to_current_index)
+                .last();
 
-            // Put all characters together except the selected one.
-            // By leaving the selected one out, it is forgotten and therefore deleted.
-            self.input = before_char_to_delete.chain(after_char_to_delete).collect();
-            self.move_cursor_left();
+            match target_char {
+                Some((idx, ch)) => {
+                    self.input.remove(idx);
+                    self.move_cursor_left(ch.len_utf8())
+                }
+                None => self.logs = String::from("No char at this position!"),
+            }
         }
     }
 
