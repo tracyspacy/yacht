@@ -89,9 +89,9 @@ impl App {
     }
 
     pub fn enter_char(&mut self, new_char: char) {
-        self.input
-            .insert(self.cursor_position, new_char.to_ascii_uppercase());
-        self.move_cursor_right(new_char.len_utf8());
+        let uppercased_char = new_char.to_uppercase().next().unwrap_or(new_char);
+        self.input.insert(self.cursor_position, uppercased_char);
+        self.move_cursor_right(uppercased_char.len_utf8());
         //dbg!(self.cursor_position);
     }
 
