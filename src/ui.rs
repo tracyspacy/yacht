@@ -6,7 +6,6 @@ use ratatui::{
 };
 
 use crate::app::{App, InputMode};
-
 /// Renders the user interface widgets.
 pub fn render(app: &mut App, frame: &mut Frame) {
     // This is where you add new widgets.
@@ -59,6 +58,8 @@ pub fn render(app: &mut App, frame: &mut Frame) {
         false => String::from("JUST A DAY └(・。・)┘"),
     };
 
+    let status_title = "STATUS".to_string() + " >>" + &app.status_day.to_uppercase() + "<< ";
+
     let global_status = Paragraph::new(format!(
         "Today is {} \n\
         \n\
@@ -70,7 +71,7 @@ pub fn render(app: &mut App, frame: &mut Frame) {
     ))
     .block(
         Block::default()
-            .title("STATUS")
+            .title(status_title)
             .title_style(Style::default().add_modifier(Modifier::BOLD))
             .title_alignment(Alignment::Center)
             .borders(Borders::ALL)
@@ -161,6 +162,8 @@ pub fn render(app: &mut App, frame: &mut Frame) {
         width: size.width,
         height: split / 2,
     };
+
+    //frame.set_cursor(input_field.x +app.cursor_position as u16 + 21, input_field.y+1);
 
     let mut list_state: ListState = ListState::default();
     list_state.select(Some(app.selected));

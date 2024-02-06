@@ -1,5 +1,6 @@
 use crate::activities_manager::{ActivityDetails, AllActivities, Day, FrequencyType};
-
+use crate::time_utils;
+use chrono::NaiveDate;
 /// Application result type.
 pub type AppResult<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
@@ -29,6 +30,8 @@ pub struct App {
     pub counter: i64,
     pub day_status: bool,
     pub activities_till_perfect_day: u8,
+    pub status_day: String,
+    pub current_day: NaiveDate,
 }
 
 impl Default for App {
@@ -49,6 +52,8 @@ impl Default for App {
             counter: 0,
             day_status: false,
             activities_till_perfect_day: 0,
+            status_day: String::new(),
+            current_day: time_utils::current_date(),
         }
     }
 }
@@ -64,17 +69,27 @@ impl App {
         app.is_perfect_day_today();
         app.activities_till_perfect_day();
         app.total_perfect_days(-30);
+        app.day_of_week_status();
+        app.logs = format! {"Today is {}",app.current_day.to_string()};
         app
     }
 
     /// Handles the tick event of the terminal.
+    /// probably there is more effective way to auto refresh on date change
     pub fn tick(&mut self) {
-        // Do something on tick if needed
+        match time_utils::is_same_date(self.current_day) {
+            true => {}
+            false => *self = Self::new(),
+        }
     }
 
     /// Set running to false to quit the application.
     pub fn quit(&mut self) {
         self.running = false;
+    }
+
+    pub fn day_of_week_status(&mut self) {
+        self.status_day = time_utils::todays_weekday(0).to_string();
     }
 
     fn move_cursor_left(&mut self, adjustment: usize) {
