@@ -1,6 +1,6 @@
 use crate::init::ACTIVITIES_FILE;
+use crate::time_utils;
 use bincode;
-use chrono::{Datelike, Duration, Local, NaiveDateTime, Utc, Weekday};
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 use std::fs::File;
@@ -27,7 +27,7 @@ impl ActivityDetails {
         //let figures: HashSet<i64> = vec![1706117517 , 1705771917 ].into_iter().collect();
 
         ActivityDetails {
-            start: current_time_timestamp(),
+            start: time_utils::current_time_timestamp(),
             frequency,
             completion_timestamps: HashSet::new(),
         }
@@ -39,33 +39,17 @@ pub struct Day {
     activities: HashMap<String, bool>,
 }
 
-fn current_time_timestamp() -> i64 {
-    Utc::now().timestamp()
-}
-
-fn is_timestamp_on_day(timestamp: i64, adjustment: i64) -> bool {
-    let timestamp_date = NaiveDateTime::from_timestamp_opt(timestamp, 0)
-        .expect("Invalid timestamp")
-        .date();
-    let today_date = (Utc::now() + Duration::days(adjustment)).date_naive();
-    timestamp_date == today_date
-}
-
-fn todays_weekday(adjustment: i64) -> Weekday {
-    (Local::now() + Duration::days(adjustment)).weekday()
-}
-
-pub fn day_types_to_show(adjustment: i64) -> [FrequencyType; 2] {
-    let weekday = todays_weekday(adjustment).number_from_monday();
-    match weekday {
-        x if x >= 6 => [FrequencyType::AllWeek, FrequencyType::WeekEnds],
-        _ => [FrequencyType::AllWeek, FrequencyType::WorkingDays],
-    }
-}
-
 impl Day {
     pub fn today() -> Day {
         Self::get_day(0)
+    }
+
+    pub fn day_types_to_show(adjustment: i64) -> [FrequencyType; 2] {
+        let weekday = time_utils::todays_weekday(adjustment).number_from_monday();
+        match weekday {
+            x if x >= 6 => [FrequencyType::AllWeek, FrequencyType::WeekEnds],
+            _ => [FrequencyType::AllWeek, FrequencyType::WorkingDays],
+        }
     }
 
     pub fn get_day(adjustment: i64) -> Day {
@@ -73,7 +57,7 @@ impl Day {
             AllActivities::load_from_file().expect("Failed to load activities");
 
         let mut today_activities: HashMap<String, bool> = HashMap::new();
-        let td = day_types_to_show(adjustment);
+        let td = Self::day_types_to_show(adjustment);
 
         activities_data
             .activities
@@ -191,7 +175,7 @@ impl AllActivities {
                     .and_modify(|activity_details| {
                         activity_details
                             .completion_timestamps
-                            .insert(current_time_timestamp());
+                            .insert(time_utils::current_time_timestamp());
                     });
                 self.save_to_file().map_err(|_| "Failed to save activities")
             }
@@ -217,7 +201,7 @@ impl AllActivities {
             Some(activity) => activity
                 .completion_timestamps
                 .iter()
-                .any(|timestamp| is_timestamp_on_day(*timestamp, adjustment)),
+                .any(|timestamp| time_utils::is_timestamp_on_day(*timestamp, adjustment)),
             None => {
                 println!("Activity not found.");
                 false

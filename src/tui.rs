@@ -41,7 +41,7 @@ impl<B: Backend> Tui<B> {
             panic_hook(panic);
         }));
 
-        self.terminal.hide_cursor()?;
+        self.terminal.show_cursor()?;
         self.terminal.clear()?;
         Ok(())
     }
@@ -70,7 +70,7 @@ impl<B: Backend> Tui<B> {
     /// It disables the raw mode and reverts back the terminal properties.
     pub fn exit(&mut self) -> AppResult<()> {
         Self::reset()?;
-        self.terminal.show_cursor()?;
+        self.terminal.hide_cursor()?;
         Ok(())
     }
 }
