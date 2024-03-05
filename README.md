@@ -40,7 +40,8 @@ cargo build --release
 
 - **Expand Frequency Types**: Add more frequency types besides the existing ones (week days basically) to provide users with greater flexibility in scheduling their activities.
 - **Stats Mode**: Implement a stats mode to allow users to view statistics by activity, such as how often an activity was done over a specified period.
-
+- update demo gif
+ 
 ### Contributing
 
 Contributions are welcome! If you encounter any bugs, have suggestions for improvements, or would like to contribute new features, please open an issue or submit a pull request.
