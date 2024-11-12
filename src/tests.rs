@@ -85,7 +85,7 @@ mod tests {
 
     #[test]
     fn test_add_new_activity_and_remove_ascii_and_not() {
-        let mut app = App::new();
+        let mut app = App::default();
         test_add_new_activity(&mut app, String::from("THINK"));
         test_remove_added_activity(&mut app, String::from("THINK"));
         test_add_new_activity(&mut app, String::from("BÜCHER LESEN"));
