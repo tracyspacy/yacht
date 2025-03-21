@@ -1,5 +1,5 @@
 use crate::app::AppResult;
-use crossterm::event::{self, Event as CrosstermEvent, KeyEvent, MouseEvent};
+use crossterm::event::{self, Event as CrosstermEvent, KeyEvent, KeyEventKind, MouseEvent};
 use std::sync::mpsc;
 use std::thread;
 use std::time::{Duration, Instant};
@@ -45,7 +45,15 @@ impl EventHandler {
 
                     if event::poll(timeout).expect("failed to poll new events") {
                         match event::read().expect("unable to read event") {
-                            CrosstermEvent::Key(e) => sender.send(Event::Key(e)),
+                            CrosstermEvent::Key(key_event) =>
+                                {
+                                    // Only handle key events with `KeyEventKind::Press`
+                                    if key_event.kind == crossterm::event::KeyEventKind::Press {
+                                        sender.send(Event::Key(key_event)).expect("failed to send terminal event");
+                                    }
+
+                                    Ok(())
+                                },
                             CrosstermEvent::Mouse(e) => sender.send(Event::Mouse(e)),
                             CrosstermEvent::Resize(w, h) => sender.send(Event::Resize(w, h)),
                             CrosstermEvent::FocusGained => Ok(()),
